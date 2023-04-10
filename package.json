@@ -1,0 +1,15 @@
+{
+  "name": "mesto-express",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.0.3",
+    "express": "~4.16.1",
+    "mongoose": "^7.0.3",
+    "nodemon": "^2.0.22"
+  }
+}
