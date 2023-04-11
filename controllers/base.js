@@ -14,7 +14,7 @@ module.exports = class BaseController {
       const obj = await this.getObjOrRaiseError({ _id: idUrlKwarg });
       return res.send(obj);
     } catch (err) {
-      if (err.errors) {
+      if (err.name === 'CastError') {
         return res.status(httpStatus.BAD_REQUEST)
           .send({ message: 'Невалидные данные' });
       }
@@ -33,7 +33,7 @@ module.exports = class BaseController {
       return res.status(httpStatus.CREATED)
         .send(obj);
     } catch (err) {
-      if (err.errors) {
+      if (err.name === 'ValidationError') {
         return res.status(httpStatus.BAD_REQUEST)
           .send({ message: 'Невалидные данные' });
       }
@@ -60,7 +60,7 @@ module.exports = class BaseController {
       await obj.save();
       return res.send(obj);
     } catch (err) {
-      if (err.errors) {
+      if (err.name === 'ValidationError') {
         return res.status(httpStatus.BAD_REQUEST)
           .send({ message: 'Невалидные данные' });
       }
@@ -80,6 +80,10 @@ module.exports = class BaseController {
       await obj.deleteOne();
       return res.send({ message: 'Объект успешно удален' });
     } catch (err) {
+      if (err.name === 'CastError') {
+        return res.status(httpStatus.BAD_REQUEST)
+          .send({ message: 'Невалидные данные' });
+      }
       if (err instanceof ObjectDoesNotExist) {
         return res.status(httpStatus.NOT_FOUND)
           .send({ message: `Объект с id ${idUrlKwarg} не найден` });

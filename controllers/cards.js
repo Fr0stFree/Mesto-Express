@@ -18,7 +18,7 @@ class CardController extends BaseController {
       await card.save();
       return res.send(card);
     } catch (err) {
-      if (err.errors) {
+      if (err.name === 'CastError') {
         return res.status(httpStatus.BAD_REQUEST)
           .send({ message: 'Невалидные данные' });
       }
