@@ -7,7 +7,7 @@ const errorHandler = require('./core/middleware');
 const app = express();
 const { PORT = 3000, MONGO_DNS = 'mongodb://localhost:27017' } = process.env;
 const dummyAuth = (req, res, next) => {
-  req.user = { _id: '64354f6f7387594efc5d6ffc' };
+  req.user = { _id: '643477e0a1aaf658689400d5' };
   next();
 };
 

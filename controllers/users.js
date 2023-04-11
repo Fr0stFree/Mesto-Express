@@ -5,17 +5,18 @@ const { getObjectOrRaise404 } = require('../core/utils');
 
 const get = async (req, res, next) => {
   try {
-    const obj = await getObjectOrRaise404(User, req.params.userId);
-    return res.send(obj);
+    const user = await getObjectOrRaise404(User, req.params.userId);
+    return res.send(user);
   } catch (err) {
     return next(err);
   }
 };
 
 const create = async (req, res, next) => {
+  const { name, about, avatar } = req.body;
   try {
-    const obj = await User.create({ ...req.body });
-    return res.status(httpStatus.CREATED).send(obj);
+    const user = await User.create({ name, about, avatar });
+    return res.status(httpStatus.CREATED).send(user);
   } catch (err) {
     return next(err);
   }
@@ -23,32 +24,32 @@ const create = async (req, res, next) => {
 
 const list = async (req, res, next) => {
   try {
-    const objects = await User.find({});
-    return res.send(objects);
+    const users = await User.find({});
+    return res.send(users);
   } catch (err) {
     return next(err);
   }
 };
 
-const update = async (req, res, next) => {
+const update = async (req, res, next, data) => {
   try {
-    const obj = await getObjectOrRaise404(User, req.user._id);
-    obj.set(req.body);
-    await obj.save();
-    return res.send(obj);
+    const user = await getObjectOrRaise404(User, req.user._id);
+    user.set({ ...data });
+    await user.save();
+    return res.send(user);
   } catch (err) {
     return next(err);
   }
 };
 
 const updateInfo = async (req, res, next) => {
-  req.body = { name: req.body.name, about: req.body.about };
-  await update(req, res, next);
+  const data = { name: req.body.name, about: req.body.about };
+  await update(req, res, next, data);
 };
 
 const updateAvatar = async (req, res, next) => {
-  req.body = { avatar: req.body.avatar };
-  await update(req, res, next);
+  const data = { avatar: req.body.avatar };
+  await update(req, res, next, data);
 };
 
 module.exports = {
