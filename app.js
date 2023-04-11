@@ -1,9 +1,8 @@
 require('dotenv').config();
-const path = require('path');
 const express = require('express');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const httpStatus = require('http-status');
+const router = require('./routes/index');
+const connectToDB = require('./core/db');
+const errorHandler = require('./core/middleware');
 
 const app = express();
 const { PORT = 3000, MONGO_DNS = 'mongodb://localhost:27017' } = process.env;
@@ -12,21 +11,12 @@ const dummyAuth = (req, res, next) => {
   next();
 };
 
-mongoose.connect(MONGO_DNS, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(dummyAuth);
+app.use(router);
+app.use(errorHandler);
 
-app.use('/cards', require('./routes/cards'));
-app.use('/users', require('./routes/users'));
-
-app.use((req, res) => {
-  res.status(httpStatus.NOT_FOUND).send({ message: 'Уходи' });
+app.listen(PORT, async () => {
+  await connectToDB(MONGO_DNS);
 });
-
-app.listen(PORT);

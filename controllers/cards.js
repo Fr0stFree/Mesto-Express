@@ -1,44 +1,61 @@
 const httpStatus = require('http-status');
 
 const Card = require('../models/cards');
-const BaseController = require('./base');
-const { ObjectDoesNotExist } = require('../utils/errors');
+const { getObjectOrRaise404 } = require('../core/utils');
 
-class CardController extends BaseController {
-  createCard = async (req, res) => {
+const create = async (req, res, next) => {
+  try {
     req.body.owner = req.user._id;
-    await this.create(req, res);
-  };
+    const card = await Card.create({ ...req.body });
+    return res.status(httpStatus.CREATED).send(card);
+  } catch (err) {
+    return next(err);
+  }
+};
 
-  toggleLike = async (req, res, callback) => {
-    const idUrlKwarg = this.getIdUrlKwarg(req);
-    try {
-      const card = await this.getObjOrRaiseError({ _id: idUrlKwarg });
-      callback(card);
-      await card.save();
-      return res.send(card);
-    } catch (err) {
-      if (err.name === 'CastError') {
-        return res.status(httpStatus.BAD_REQUEST)
-          .send({ message: 'Невалидные данные' });
-      }
-      if (err instanceof ObjectDoesNotExist) {
-        return res.status(httpStatus.NOT_FOUND)
-          .send({ message: `Объект с id ${idUrlKwarg} не найден` });
-      }
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR)
-        .send({ message: `Произошла ошибка: ${err.message}` });
-    }
-  };
+const list = async (req, res, next) => {
+  try {
+    const cards = await Card.find({});
+    return res.send(cards);
+  } catch (err) {
+    return next(err);
+  }
+};
 
-  like = async (req, res) => {
-    await this.toggleLike(req, res, (card) => card.likes.addToSet(req.user._id));
-  };
+const remove = async (req, res, next) => {
+  try {
+    const obj = await getObjectOrRaise404(Card, req.params.cardId);
+    await obj.deleteOne();
+    return res.send({ message: 'Объект успешно удален' });
+  } catch (err) {
+    return next(err);
+  }
+};
 
-  dislike = async (req, res) => {
-    await this.toggleLike(req, res, (card) => card.likes.pull(req.user._id));
-  };
-}
+const toggleLike = async (req, res, next, callback) => {
+  try {
+    const card = await getObjectOrRaise404(Card, req.params.cardId);
+    callback(card);
+    await card.save();
+    const updatedCard = await Card.findById(card._id).populate('owner').populate('likes');
+    return res.send(updatedCard);
+  } catch (err) {
+    return next(err);
+  }
+};
 
-const cardController = new CardController(Card, 'cardId');
-module.exports = cardController;
+const like = async (req, res, next) => {
+  await toggleLike(req, res, next, (card) => card.likes.addToSet(req.user._id));
+};
+
+const dislike = async (req, res, next) => {
+  await toggleLike(req, res, next, (card) => card.likes.pull(req.user._id));
+};
+
+module.exports = {
+  create,
+  list,
+  remove,
+  like,
+  dislike,
+};

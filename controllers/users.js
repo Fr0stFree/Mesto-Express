@@ -1,19 +1,60 @@
-const BaseController = require('./base');
+const httpStatus = require('http-status');
+
 const User = require('../models/users');
+const { getObjectOrRaise404 } = require('../core/utils');
 
-class UserController extends BaseController {
-  updateInfo = async (req, res) => {
-    req.idUrlKwarg = req.user._id;
-    req.body = { name: req.body.name, about: req.body.about };
-    await this.update(req, res);
-  };
+const get = async (req, res, next) => {
+  try {
+    const obj = await getObjectOrRaise404(User, req.params.userId);
+    return res.send(obj);
+  } catch (err) {
+    return next(err);
+  }
+};
 
-  updateAvatar = async (req, res) => {
-    req.idUrlKwarg = req.user._id;
-    req.body = { avatar: req.body.avatar };
-    await this.update(req, res);
-  };
-}
+const create = async (req, res, next) => {
+  try {
+    const obj = await User.create({ ...req.body });
+    return res.status(httpStatus.CREATED).send(obj);
+  } catch (err) {
+    return next(err);
+  }
+};
 
-const userController = new UserController(User, 'userId');
-module.exports = userController;
+const list = async (req, res, next) => {
+  try {
+    const objects = await User.find({});
+    return res.send(objects);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const update = async (req, res, next) => {
+  try {
+    const obj = await getObjectOrRaise404(User, req.user._id);
+    obj.set(req.body);
+    await obj.save();
+    return res.send(obj);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const updateInfo = async (req, res, next) => {
+  req.body = { name: req.body.name, about: req.body.about };
+  await update(req, res, next);
+};
+
+const updateAvatar = async (req, res, next) => {
+  req.body = { avatar: req.body.avatar };
+  await update(req, res, next);
+};
+
+module.exports = {
+  get,
+  create,
+  list,
+  updateInfo,
+  updateAvatar,
+};
