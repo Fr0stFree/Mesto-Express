@@ -3,11 +3,16 @@ const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const express = require('express');
-const { dummyAuth } = require('./utils/middleware');
 
 
-const { PORT = 3000, MONGO_DNS = 'mongodb://localhost:27017' } = process.env;
 const app = express();
+const { PORT = 3000, MONGO_DNS = 'mongodb://localhost:27017' } = process.env;
+const dummyAuth = (req, res, next) => {
+  req.user = {
+    _id: '643532afbbc0d5249985f540',
+  };
+  next();
+};
 
 mongoose.connect(MONGO_DNS, {
   useNewUrlParser: true,

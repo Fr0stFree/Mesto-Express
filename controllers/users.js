@@ -1,61 +1,20 @@
+const BaseController = require('./base');
 const User = require('../models/users');
 
 
-class UserController {
-  get = async (req, res, next) => {
-    try {
-      const user = await User.findById(req.params.id);
-      res.send({status: "OK", data: user});
-    } catch (err) {
-      if (err.kind === 'ObjectId') {
-        return res.status(404).send({status: "FAIL", message: `Пользователь с id ${req.params.id} не найден`});
-      }
-      res.status(500).send({status: "FAIL", message: `Произошла ошибка: ${err.message}`});
-    }
-  }
+class UserController extends BaseController {
+  updateInfo = async (req, res) => {
+    req.id_url_kwarg = req.user._id;
+    req.body = {name: req.body.name, about: req.body.about};
+    return await this.update(req, res);
+  };
 
-  create = async (req, res, next) => {
-    const {name, about, avatar} = req.body;
-    try {
-      const user = await User.create({name, about, avatar});
-      res.status(201).send({status: "OK", data: user});
-    } catch (err) {
-      if (err['_message'] === 'user validation failed') {
-        return res.status(400).send({status: "FAIL", message: "Не все поля заполнены."});
-      }
-      res.status(500).send({status: "FAIL", message: `Произошла ошибка: ${err.message}`});
-    }
-  }
-
-  list = async (req, res, next) => {
-    try {
-      const users = await User.find({})
-      res.send({status: "OK", data: users});
-    } catch (err) {
-      res.status(500).send({status: "FAIL", message: `Произошла ошибка: ${err.message}`});
-    }
-  }
-
-  update = async (req, res, next) => {
-    const { name, about, avatar } = req.body;
-    try {
-      const user = await User.findByIdAndUpdate(
-        req.user._id,
-        { name, about, avatar },
-        {new: true, runValidators: true}
-      );
-      res.send({status: "OK", data: user});
-    } catch (err) {
-      if (err.kind === 'ObjectId') {
-        return res.status(404).send({
-          status: "FAIL",
-          message: `Пользователь с id ${req.params.id} не найден`
-        });
-      }
-      res.status(500).send({status: "FAIL", message: `Произошла ошибка: ${err.message}`});
-    }
+  updateAvatar = async (req, res) => {
+    req.id_url_kwarg = req.user._id;
+    req.body = {avatar: req.body.avatar};
+    return await this.update(req, res);
   }
 }
 
-const userController = new UserController();
+const userController = new UserController(User, 'userId');
 module.exports = userController;
