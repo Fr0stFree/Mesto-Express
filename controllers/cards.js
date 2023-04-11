@@ -4,9 +4,9 @@ const Card = require('../models/cards');
 const { getObjectOrRaise404 } = require('../core/utils');
 
 const create = async (req, res, next) => {
-  const { name, link, } = req.body;
+  const { name, link } = req.body;
   try {
-    const card = await Card.create({name, link, owner: req.user._id});
+    const card = await Card.create({ name, link, owner: req.user._id });
     return await res.status(httpStatus.CREATED).send(card);
   } catch (err) {
     return next(err);

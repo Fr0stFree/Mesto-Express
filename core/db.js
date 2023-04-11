@@ -5,6 +5,6 @@ const connectToDB = async (MONGO_DNS) => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-}
+};
 
 module.exports = connectToDB;
