@@ -1,16 +1,13 @@
 require('dotenv').config();
 const path = require('path');
+const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const express = require('express');
-
 
 const app = express();
 const { PORT = 3000, MONGO_DNS = 'mongodb://localhost:27017' } = process.env;
 const dummyAuth = (req, res, next) => {
-  req.user = {
-    _id: '643532afbbc0d5249985f540',
-  };
+  req.user = { _id: '64354f6f7387594efc5d6ffc' };
   next();
 };
 
@@ -27,6 +24,4 @@ app.use(dummyAuth);
 app.use('/cards', require('./routes/cards'));
 app.use('/users', require('./routes/users'));
 
-app.listen(PORT, () => {
-  console.log(`"Server listening port ${PORT}`)
-})
+app.listen(PORT);

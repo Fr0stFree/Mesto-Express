@@ -1,13 +1,13 @@
+const httpStatus = require('http-status');
+
 const Card = require('../models/cards');
 const BaseController = require('./base');
 const { ObjectDoesNotExist } = require('../utils/errors');
 
-
 class CardController extends BaseController {
-
   createCard = async (req, res) => {
     req.body.owner = req.user._id;
-    return await this.create(req, res);
+    await this.create(req, res);
   };
 
   toggleLike = async (req, res, callback) => {
@@ -19,10 +19,13 @@ class CardController extends BaseController {
       res.send(card);
     } catch (err) {
       if (err instanceof ObjectDoesNotExist) {
-        return res.status(404).send({message: `Карточка с id ${idUrlKwarg} не найдена` });
+        return res.status(httpStatus.NOT_FOUND)
+          .send({ message: `Карточка с id ${idUrlKwarg} не найдена` });
       }
-      res.status(500).send({message: `Произошла ошибка: ${err.message}`});
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR)
+        .send({ message: `Произошла ошибка: ${err.message}` });
     }
+    return null;
   };
 
   like = async (req, res) => {

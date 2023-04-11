@@ -1,8 +1,8 @@
 const express = require('express');
-const router = express.Router();
 
 const userController = require('../controllers/users');
 
+const router = express.Router();
 
 router.get(`/:${userController.idUrlKwarg}`, userController.get);
 router.post('/', userController.create);
