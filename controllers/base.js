@@ -90,11 +90,9 @@ module.exports = class BaseController {
   getIdUrlKwarg = (req) => req.idUrlKwarg || req.params[this.idUrlKwarg];
 
   getObjOrRaiseError = async (data) => {
-    let obj = null;
-    try {
-      obj = await this.Model.findOne({ ...data });
-    } catch (err) {
-      throw new ObjectDoesNotExist('Объект не найден');
+    const obj = await this.Model.findOne({ ...data });
+    if (!obj) {
+      throw new ObjectDoesNotExist();
     }
     return obj;
   };
