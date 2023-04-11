@@ -18,9 +18,13 @@ class CardController extends BaseController {
       await card.save();
       return res.send(card);
     } catch (err) {
-      if (err instanceof ObjectDoesNotExist) {
+      if (err.errors) {
         return res.status(httpStatus.BAD_REQUEST)
-          .send({ message: `Карточка с id ${idUrlKwarg} не найдена` });
+          .send({ message: 'Невалидные данные' });
+      }
+      if (err instanceof ObjectDoesNotExist) {
+        return res.status(httpStatus.NOT_FOUND)
+          .send({ message: `Объект с id ${idUrlKwarg} не найден` });
       }
       return res.status(httpStatus.INTERNAL_SERVER_ERROR)
         .send({ message: `Произошла ошибка: ${err.message}` });

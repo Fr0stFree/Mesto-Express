@@ -14,6 +14,10 @@ module.exports = class BaseController {
       const obj = await this.getObjOrRaiseError({ _id: idUrlKwarg });
       return res.send(obj);
     } catch (err) {
+      if (err.errors) {
+        return res.status(httpStatus.BAD_REQUEST)
+          .send({ message: 'Невалидные данные' });
+      }
       if (err instanceof ObjectDoesNotExist) {
         return res.status(httpStatus.NOT_FOUND)
           .send({ message: `Объект с id ${idUrlKwarg} не найден` });
