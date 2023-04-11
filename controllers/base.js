@@ -12,16 +12,15 @@ module.exports = class BaseController {
     const idUrlKwarg = this.getIdUrlKwarg(req);
     try {
       const obj = await this.getObjOrRaiseError({ _id: idUrlKwarg });
-      res.send(obj);
+      return res.send(obj);
     } catch (err) {
-      if (err instanceof ObjectDoesNotExist || err.name === 'CastError') {
+      if (err instanceof ObjectDoesNotExist) {
         return res.status(httpStatus.NOT_FOUND)
           .send({ message: `Объект с id ${idUrlKwarg} не найден` });
       }
-      res.status(httpStatus.INTERNAL_SERVER_ERROR)
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR)
         .send({ message: `Произошла ошибка: ${err.message}` });
     }
-    return null;
   };
 
   create = async (req, res) => {
@@ -31,13 +30,12 @@ module.exports = class BaseController {
     }
     try {
       const obj = await this.Model.create({ ...req.body });
-      res.status(httpStatus.CREATED)
+      return res.status(httpStatus.CREATED)
         .send(obj);
     } catch (err) {
-      res.status(httpStatus.INTERNAL_SERVER_ERROR)
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR)
         .send({ message: `Произошла ошибка: ${err.message}` });
     }
-    return null;
   };
 
   list = async (req, res) => {
@@ -60,16 +58,15 @@ module.exports = class BaseController {
       const obj = await this.getObjOrRaiseError({ _id: idUrlKwarg });
       obj.set({ ...req.body });
       await obj.save();
-      res.send(obj);
+      return res.send(obj);
     } catch (err) {
       if (err instanceof ObjectDoesNotExist) {
         return res.status(httpStatus.NOT_FOUND)
           .send({ message: `Объект с id ${idUrlKwarg} не найден` });
       }
-      res.status(httpStatus.INTERNAL_SERVER_ERROR)
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR)
         .send({ message: `Произошла ошибка: ${err.message}` });
     }
-    return null;
   };
 
   delete = async (req, res) => {
@@ -77,17 +74,15 @@ module.exports = class BaseController {
     try {
       const obj = await this.getObjOrRaiseError({ _id: idUrlKwarg });
       await obj.deleteOne();
-      res.status(httpStatus.CREATED)
-        .send({ message: 'Объект успешно удален' });
+      return res.send({ message: 'Объект успешно удален' });
     } catch (err) {
       if (err instanceof ObjectDoesNotExist) {
         return res.status(httpStatus.NOT_FOUND)
           .send({ message: `Объект с id ${idUrlKwarg} не найден` });
       }
-      res.status(httpStatus.INTERNAL_SERVER_ERROR)
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR)
         .send({ message: `Произошла ошибка: ${err.message}` });
     }
-    return null;
   };
 
   isValid = (data) => new this.Model({ ...data }).validateSync() === undefined;
@@ -95,8 +90,10 @@ module.exports = class BaseController {
   getIdUrlKwarg = (req) => req.idUrlKwarg || req.params[this.idUrlKwarg];
 
   getObjOrRaiseError = async (data) => {
-    const obj = await this.Model.findOne({ ...data });
-    if (!obj) {
+    let obj = null;
+    try {
+      obj = await this.Model.findOne({ ...data });
+    } catch (err) {
       throw new ObjectDoesNotExist('Объект не найден');
     }
     return obj;

@@ -16,16 +16,15 @@ class CardController extends BaseController {
       const card = await this.getObjOrRaiseError({ _id: idUrlKwarg });
       callback(card);
       await card.save();
-      res.send(card);
+      return res.send(card);
     } catch (err) {
       if (err instanceof ObjectDoesNotExist) {
-        return res.status(httpStatus.NOT_FOUND)
+        return res.status(httpStatus.BAD_REQUEST)
           .send({ message: `Карточка с id ${idUrlKwarg} не найдена` });
       }
       return res.status(httpStatus.INTERNAL_SERVER_ERROR)
         .send({ message: `Произошла ошибка: ${err.message}` });
     }
-    return null;
   };
 
   like = async (req, res) => {
