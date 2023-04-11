@@ -14,7 +14,7 @@ module.exports = class BaseController {
       const obj = await this.getObjOrRaiseError({ _id: idUrlKwarg });
       res.send(obj);
     } catch (err) {
-      if (err instanceof ObjectDoesNotExist) {
+      if (err instanceof ObjectDoesNotExist || err.name === 'CastError') {
         return res.status(httpStatus.NOT_FOUND)
           .send({ message: `Объект с id ${idUrlKwarg} не найден` });
       }
@@ -25,10 +25,9 @@ module.exports = class BaseController {
   };
 
   create = async (req, res) => {
-    const validationErrors = new this.Model({ ...req.body }).validateSync();
-    if (validationErrors) {
+    if (!this.isValid(req.body)) {
       return res.status(httpStatus.BAD_REQUEST)
-        .send({ message: { ...validationErrors.errors } });
+        .send({ message: 'Невалидные данные' });
     }
     try {
       const obj = await this.Model.create({ ...req.body });
@@ -54,6 +53,10 @@ module.exports = class BaseController {
   update = async (req, res) => {
     const idUrlKwarg = this.getIdUrlKwarg(req);
     try {
+      if (!this.isValid(req.body)) {
+        return res.status(httpStatus.BAD_REQUEST)
+          .send({ message: 'Невалидные данные' });
+      }
       const obj = await this.getObjOrRaiseError({ _id: idUrlKwarg });
       obj.set({ ...req.body });
       await obj.save();
@@ -87,10 +90,12 @@ module.exports = class BaseController {
     return null;
   };
 
+  isValid = (data) => new this.Model({ ...data }).validateSync() === undefined;
+
   getIdUrlKwarg = (req) => req.idUrlKwarg || req.params[this.idUrlKwarg];
 
-  getObjOrRaiseError = async ({ ...params }) => {
-    const obj = await this.Model.findOne({ ...params });
+  getObjOrRaiseError = async (data) => {
+    const obj = await this.Model.findOne({ ...data });
     if (!obj) {
       throw new ObjectDoesNotExist('Объект не найден');
     }
