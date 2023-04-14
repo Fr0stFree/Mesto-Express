@@ -11,7 +11,8 @@
     "dotenv": "^16.0.3",
     "express": "~4.16.1",
     "http-status": "^1.6.2",
-    "mongoose": "^7.0.3"
+    "mongoose": "^7.0.3",
+    "mongoose-type-url": "^2.1.0"
   },
   "devDependencies": {
     "eslint": "^8.38.0",

@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 
 const ObjectDoesNotExist = require('./errors');
 
+const OAuth2 = (req, res, next) => {
+  req.user = { _id: '643903d6cb8b9e41f0bb02d9' };
+  next();
+};
+
 // eslint-disable-next-line no-unused-vars
 const errorHandler = async (err, req, res, next) => {
   if (err instanceof ObjectDoesNotExist) {
@@ -11,14 +16,17 @@ const errorHandler = async (err, req, res, next) => {
   }
   if (err instanceof mongoose.Error.ValidationError) {
     return res.status(httpStatus.BAD_REQUEST)
-      .send({ message: 'Данные не прошли валидацию' });
+      .send({ message: err.message });
   }
   if (err instanceof mongoose.Error.CastError) {
     return res.status(httpStatus.BAD_REQUEST)
-      .send({ message: 'Некорректный формат входных данных' });
+      .send({ message: err.message });
   }
   return res.status(httpStatus.INTERNAL_SERVER_ERROR)
     .send({ message: `Произошла ошибка: ${err.message}` });
 };
 
-module.exports = errorHandler;
+module.exports = {
+  OAuth2,
+  errorHandler,
+};
