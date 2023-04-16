@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const bcrypt = require('bcryptjs');
 
 const User = require('../models/users');
 const { getObjectOrRaise404 } = require('../core/utils');
@@ -13,9 +14,11 @@ const get = async (req, res, next) => {
 };
 
 const create = async (req, res, next) => {
-  const { name, about, avatar } = req.body;
+  const { email, password, name, about, avatar } = req.body;
   try {
-    const user = await User.create({ name, about, avatar });
+    await User.validate({ email, password, name, about, avatar });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ email, password: hashedPassword, name, about, avatar });
     return res.status(httpStatus.CREATED).send(user);
   } catch (err) {
     return next(err);

@@ -8,7 +8,6 @@ const OAuth2 = (req, res, next) => {
   next();
 };
 
-// eslint-disable-next-line no-unused-vars
 const errorHandler = async (err, req, res, next) => {
   if (err instanceof ObjectDoesNotExist) {
     return res.status(httpStatus.NOT_FOUND)
@@ -21,6 +20,10 @@ const errorHandler = async (err, req, res, next) => {
   if (err instanceof mongoose.Error.CastError) {
     return res.status(httpStatus.BAD_REQUEST)
       .send({ message: err.message });
+  }
+  if (err.name === 'MongoServerError' && err.code === 11000){
+    return res.status(httpStatus.CONFLICT)
+     .send({ message: err.message });
   }
   return res.status(httpStatus.INTERNAL_SERVER_ERROR)
     .send({ message: `Произошла ошибка: ${err.message}` });
