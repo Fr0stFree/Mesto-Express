@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 require('mongoose-type-email');
+const bcrypt = require('bcryptjs');
+const httpStatus = require('http-status');
+
+const { ObjectDoesNotExist } = require('../core/errors');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -29,5 +33,17 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+userSchema.statics.findByCredentials = async function (email, password) {
+  const user = await this.findOne({ email });
+  if (!user) {
+    throw new ObjectDoesNotExist('Incorrect email or password');
+  }
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    throw new ObjectDoesNotExist('Incorrect email or password');
+  }
+  return user;
+};
 
 module.exports = mongoose.model('user', userSchema);

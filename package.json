@@ -12,6 +12,7 @@
     "dotenv": "^16.0.3",
     "express": "~4.16.1",
     "http-status": "^1.6.2",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.3",
     "mongoose-type-email": "^1.1.2",
     "mongoose-type-url": "^2.1.0"

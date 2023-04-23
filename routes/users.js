@@ -1,7 +1,10 @@
 const express = require('express');
+
+const auth = require('../middleware/auth');
 const {
   get,
   create,
+  login,
   list,
   updateInfo,
   updateAvatar,
@@ -9,10 +12,11 @@ const {
 
 const router = express.Router();
 
-router.get('/:userId', get);
-router.post('/', create);
-router.get('/', list);
-router.patch('/me', updateInfo);
-router.patch('/me/avatar', updateAvatar);
+router.post('/signup', create);
+router.post('/signin', login);
+router.get('/:userId', auth, get);
+router.get('/', auth, list);
+router.patch('/me', auth, updateInfo);
+router.patch('/me/avatar', auth, updateAvatar);
 
 module.exports = router;

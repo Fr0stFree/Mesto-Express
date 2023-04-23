@@ -1,4 +1,6 @@
 class ObjectDoesNotExist extends Error {
 }
 
-module.exports = ObjectDoesNotExist;
+module.exports = {
+  ObjectDoesNotExist,
+};

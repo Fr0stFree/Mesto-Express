@@ -1,8 +1,11 @@
 const httpStatus = require('http-status');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/users');
+const settings = require('../core/settings');
 const { getObjectOrRaise404 } = require('../core/utils');
+const { ObjectDoesNotExist } = require('../core/errors');
 
 const get = async (req, res, next) => {
   try {
@@ -13,12 +16,36 @@ const get = async (req, res, next) => {
   }
 };
 
-const create = async (req, res, next) => {
-  const { email, password, name, about, avatar } = req.body;
+const login = async (req, res, next) => {
+  const { email, password } = req.body;
   try {
-    await User.validate({ email, password, name, about, avatar });
+    const user = await User.findByCredentials(email, password);
+    const token = jwt.sign(
+      { userId: user._id },
+      settings.SECRET_KEY,
+      { expiresIn: settings.TOKEN_EXPIRATION },
+    );
+    return res.send(token);
+  } catch (err) {
+    if (err instanceof ObjectDoesNotExist) {
+      return res.status(httpStatus.UNAUTHORIZED).send({ message: err.message });
+    }
+    return next(err);
+  }
+};
+
+const create = async (req, res, next) => {
+  const {
+    email, password, name, about, avatar,
+  } = req.body;
+  try {
+    await User.validate({
+      email, password, name, about, avatar,
+    });
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ email, password: hashedPassword, name, about, avatar });
+    const user = await User.create({
+      email, password: hashedPassword, name, about, avatar,
+    });
     return res.status(httpStatus.CREATED).send(user);
   } catch (err) {
     return next(err);
@@ -58,6 +85,7 @@ const updateAvatar = async (req, res, next) => {
 module.exports = {
   get,
   create,
+  login,
   list,
   updateInfo,
   updateAvatar,
