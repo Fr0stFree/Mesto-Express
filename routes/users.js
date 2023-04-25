@@ -1,4 +1,5 @@
 const express = require('express');
+const { celebrate } = require('celebrate');
 
 const auth = require('../middleware/auth');
 const {
@@ -13,7 +14,7 @@ const {
 const router = express.Router();
 
 router.post('/signup', create);
-router.post('/signin', login);
+router.post('/signin', auth, login);
 router.get('/:userId', auth, get);
 router.get('/', auth, list);
 router.patch('/me', auth, updateInfo);

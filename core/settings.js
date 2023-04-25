@@ -4,4 +4,3 @@ module.exports = {
   MONGO_DNS: process.env.MONGO_DNS || 'mongodb://localhost:27017',
   SERVER_PORT: process.env.SERVER_PORT || 3000,
 };
-
