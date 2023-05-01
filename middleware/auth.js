@@ -1,9 +1,10 @@
+const jwt = require('jsonwebtoken');
 const httpStatus = require('http-status');
 
+const User = require('../models/users');
 const settings = require('../core/settings');
-const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res.status(httpStatus.UNAUTHORIZED).json({ message: 'No token provided' });
@@ -15,6 +16,6 @@ module.exports = (req, res, next) => {
   } catch (err) {
     return res.status(httpStatus.BAD_REQUEST).json({ message: 'Token is not valid' });
   }
-  req.user = payload;
+  req.user = await User.findById(payload.userId);
   return next();
 };

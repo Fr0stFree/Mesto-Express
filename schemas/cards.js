@@ -1,18 +1,28 @@
 const { Joi } = require('celebrate');
 
-const postSchema = {
+const createSchema = {
   body: Joi.object().keys({
-    email: Joi.string().required().email().lowercase()
-      .max(255),
-    password: Joi.string().required().min(8).max(255),
-    name: Joi.string().required().alphanum().min(2)
+    name: Joi
+      .string()
+      .required()
+      .min(2)
       .max(30),
-    about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required().min(2).max(255)
+    link: Joi
+      .string()
+      .required()
       .uri(),
   }),
 };
 
+const getOneSchema = {
+  params: Joi.object().keys({
+    cardId: Joi
+      .string()
+      .required(),
+  }),
+};
+
 module.exports = {
-  postSchema,
+  createSchema,
+  getOneSchema,
 };

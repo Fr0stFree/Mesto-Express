@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 require('mongoose-type-email');
 const bcrypt = require('bcryptjs');
-const httpStatus = require('http-status');
 
-const { ObjectDoesNotExist } = require('../core/errors');
+const ObjectDoesNotExist = require('../core/errors');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -15,6 +14,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
+    select: false,
   },
   name: {
     type: String,
@@ -32,8 +32,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+}, {
+  versionKey: false,
 });
 
+// eslint-disable-next-line func-names
 userSchema.statics.findByCredentials = async function (email, password) {
   const user = await this.findOne({ email });
   if (!user) {

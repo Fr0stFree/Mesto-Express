@@ -1,9 +1,10 @@
 const httpStatus = require('http-status');
 const mongoose = require('mongoose');
 
-const { ObjectDoesNotExist } = require('../core/errors');
+const ObjectDoesNotExist = require('../core/errors');
 
-module.exports = async (err, req, res) => {
+// eslint-disable-next-line no-unused-vars
+module.exports = async (err, req, res, next) => {
   if (err instanceof ObjectDoesNotExist) {
     return res.status(httpStatus.NOT_FOUND)
       .send({ message: err.message });

@@ -10,14 +10,21 @@ const {
   updateInfo,
   updateAvatar,
 } = require('../controllers/users');
+const {
+  registerSchema,
+  loginSchema,
+  getOneSchema,
+  updateInfoSchema,
+  updateAvatarSchema,
+} = require('../schemas/users');
 
 const router = express.Router();
 
-router.post('/signup', create);
-router.post('/signin', auth, login);
-router.get('/:userId', auth, get);
+router.post('/signup', celebrate(registerSchema), create);
+router.post('/signin', celebrate(loginSchema), login);
+router.get('/:userId', auth, celebrate(getOneSchema), get);
 router.get('/', auth, list);
-router.patch('/me', auth, updateInfo);
-router.patch('/me/avatar', auth, updateAvatar);
+router.patch('/me', auth, celebrate(updateInfoSchema), updateInfo);
+router.patch('/me/avatar', auth, celebrate(updateAvatarSchema), updateAvatar);
 
 module.exports = router;

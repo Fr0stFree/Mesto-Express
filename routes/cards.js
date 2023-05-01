@@ -10,15 +10,16 @@ const {
   dislike,
 } = require('../controllers/cards');
 const {
-  postSchema,
+  createSchema,
+  getOneSchema,
 } = require('../schemas/cards');
 
 const router = express.Router();
 
-router.get('/', list);
-router.post('/', auth, celebrate(postSchema), create);
-router.delete('/:cardId', auth, remove);
-router.put('/:cardId/likes', auth, like);
-router.delete('/:cardId/likes', auth, dislike);
+router.get('/', auth, list);
+router.post('/', auth, celebrate(createSchema), create);
+router.delete('/:cardId', celebrate(getOneSchema), auth, remove);
+router.put('/:cardId/likes', celebrate(getOneSchema), auth, like);
+router.delete('/:cardId/likes', celebrate(getOneSchema), auth, dislike);
 
 module.exports = router;
