@@ -22,7 +22,6 @@ const updateAvatarSchema = {
       .string()
       .required()
       .min(2)
-      .max(255)
       .pattern(URL_PATTERN),
   }),
 };

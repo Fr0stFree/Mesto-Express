@@ -7,13 +7,11 @@ const registerSchema = {
       .string()
       .required()
       .email()
-      .lowercase()
-      .max(255),
+      .lowercase(),
     password: Joi
       .string()
       .required()
-      .min(8)
-      .max(255),
+      .min(8),
     name: Joi
       .string()
       .optional()
@@ -27,7 +25,6 @@ const registerSchema = {
     avatar: Joi
       .string()
       .optional()
-      .max(255)
       .pattern(URL_PATTERN),
   }),
 };
@@ -38,13 +35,11 @@ const loginSchema = {
       .string()
       .required()
       .email()
-      .lowercase()
-      .max(255),
+      .lowercase(),
     password: Joi
       .string()
       .required()
-      .min(8)
-      .max(255),
+      .min(8),
   }),
 };
 

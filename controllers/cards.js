@@ -3,6 +3,7 @@ const httpStatus = require('http-status');
 const User = require('../models/users');
 const Card = require('../models/cards');
 const { getObjectOrRaise404 } = require('../core/utils');
+const { PermissionDenied } = require('../core/errors');
 
 const create = async (req, res, next) => {
   const { name, link } = req.body;
@@ -30,8 +31,7 @@ const remove = async (req, res, next) => {
       User.findById(req.user.userId),
     ]);
     if (!card.isOwned(user)) {
-      return res.status(httpStatus.FORBIDDEN)
-        .send({ message: 'You are not allowed to remove other people\'s cards' });
+      next(new PermissionDenied('You are not allowed to remove other people\'s cards'));
     }
     await card.deleteOne();
     return res.send({ message: `'${card.name}' успешно удалена` });

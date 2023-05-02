@@ -1,12 +1,28 @@
 const httpStatus = require('http-status');
 const mongoose = require('mongoose');
 
-const ObjectDoesNotExist = require('../core/errors');
+const {
+  PermissionDenied,
+  ObjectDoesNotExist,
+  InvalidCredentials,
+  PageNotFound,
+} = require('../core/errors');
 
-// eslint-disable-next-line no-unused-vars
 module.exports = async (err, req, res, next) => {
   if (err instanceof ObjectDoesNotExist) {
-    return res.status(httpStatus.NOT_FOUND)
+    return res.status(err.statusCode)
+      .send({ message: err.message });
+  }
+  if (err instanceof PermissionDenied) {
+    return res.status(err.statusCode)
+      .send({ message: err.message });
+  }
+  if (err instanceof InvalidCredentials) {
+    return res.status(err.statusCode)
+      .send({ message: err.message });
+  }
+  if (err instanceof PageNotFound) {
+    return res.status(err.statusCode)
       .send({ message: err.message });
   }
   if (err instanceof mongoose.Error.ValidationError) {

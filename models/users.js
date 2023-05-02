@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 require('mongoose-type-email');
+require('mongoose-type-url');
 const bcrypt = require('bcryptjs');
 
-const ObjectDoesNotExist = require('../core/errors');
+const { InvalidCredentials } = require('../core/errors');
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -13,7 +14,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
   },
   name: {
@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
     default: 'Исследователь',
   },
   avatar: {
-    type: String,
+    type: mongoose.Schema.Types.Url,
     required: false,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
@@ -39,15 +39,14 @@ const userSchema = new mongoose.Schema({
   versionKey: false,
 });
 
-// eslint-disable-next-line func-names
 userSchema.statics.findByCredentials = async function (email, password) {
   const user = await this.findOne({ email }).select('+password');
   if (!user) {
-    throw new ObjectDoesNotExist('Incorrect email or password');
+    throw new InvalidCredentials('Incorrect email or password');
   }
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    throw new ObjectDoesNotExist('Incorrect email or password');
+    throw new InvalidCredentials('Incorrect email or password');
   }
   return user;
 };

@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 const { SECRET_KEY, TOKEN_EXPIRATION } = require('../core/settings');
 const { getObjectOrRaise404 } = require('../core/utils');
-const ObjectDoesNotExist = require('../core/errors');
 
 const get = async (req, res, next) => {
   try {
@@ -36,9 +35,6 @@ const login = async (req, res, next) => {
     );
     return res.send({ token, type: 'Bearer' });
   } catch (err) {
-    if (err instanceof ObjectDoesNotExist) {
-      return res.status(httpStatus.UNAUTHORIZED).send({ message: err.message });
-    }
     return next(err);
   }
 };
