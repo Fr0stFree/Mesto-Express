@@ -1,8 +1,7 @@
 const httpStatus = require('http-status');
 
-const User = require('../models/users');
 const Card = require('../models/cards');
-const { getObjectOrRaise404 } = require('../core/utils');
+const { getObjectOrRaise404, getUser } = require('../core/utils');
 const { PermissionDenied } = require('../core/errors');
 
 const create = async (req, res, next) => {
@@ -28,7 +27,7 @@ const remove = async (req, res, next) => {
   try {
     const [card, user] = await Promise.all([
       getObjectOrRaise404(Card, req.params.cardId),
-      User.findById(req.user.userId),
+      getUser(req.user.userId),
     ]);
     if (!card.isOwned(user)) {
       next(new PermissionDenied('You are not allowed to remove other people\'s cards'));

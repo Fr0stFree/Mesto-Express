@@ -7,4 +7,4 @@ const connectToMongo = async (MONGO_DNS) => {
   });
 };
 
-module.exports = { connectToMongo };
+module.exports = connectToMongo;

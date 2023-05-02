@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 module.exports = {
   TOKEN_EXPIRATION: '7d',
   SECRET_KEY: process.env.SECRET_KEY || 'SOMETHING-REALLY-SECRET',

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const { InvalidCredentials } = require('../core/errors');
-const { SECRET_KEY } = require('../core/settings');
+const { SECRET_KEY } = require('../config');
 
 module.exports = async (req, res, next) => {
   const { authorization } = req.headers;

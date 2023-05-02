@@ -1,11 +1,10 @@
-require('dotenv').config();
 const express = require('express');
 const { errors } = require('celebrate');
 
-const { SERVER_PORT, MONGO_DNS } = require('./core/settings');
+const { SERVER_PORT, MONGO_DNS } = require('./config');
 const router = require('./routes/index');
 const errorHandler = require('./middleware/errorHandler');
-const { connectToMongo } = require('./core/db');
+const connectToMongo = require('./core/db');
 
 const app = express();
 

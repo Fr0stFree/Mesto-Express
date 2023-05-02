@@ -3,12 +3,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/users');
-const { SECRET_KEY, TOKEN_EXPIRATION } = require('../core/settings');
-const { getObjectOrRaise404 } = require('../core/utils');
+const { SECRET_KEY, TOKEN_EXPIRATION } = require('../config');
+const { getUser } = require('../core/utils');
 
 const get = async (req, res, next) => {
   try {
-    const user = await getObjectOrRaise404(User, req.params.userId);
+    const user = await getUser(req.params.userId);
     return res.send(user);
   } catch (err) {
     return next(err);
@@ -17,7 +17,7 @@ const get = async (req, res, next) => {
 
 const getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await getUser(req.user.userId);
     return res.send(user);
   } catch (err) {
     return next(err);
@@ -69,7 +69,7 @@ const list = async (req, res, next) => {
 
 const update = async (req, res, next, data) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await getUser(req.user.userId);
     user.set({ ...data });
     await user.save();
     return res.send(user);

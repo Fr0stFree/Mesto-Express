@@ -1,5 +1,5 @@
 const { Joi } = require('celebrate');
-const { URL_PATTERN } = require('../core/settings');
+const { URL_PATTERN } = require('../config');
 
 const updateInfoSchema = {
   body: Joi.object().keys({
