@@ -1,12 +1,13 @@
 const httpStatus = require('http-status');
 
+const User = require('../models/users');
 const Card = require('../models/cards');
 const { getObjectOrRaise404 } = require('../core/utils');
 
 const create = async (req, res, next) => {
   const { name, link } = req.body;
   try {
-    const card = await Card.create({ name, link, owner: req.user._id });
+    const card = await Card.create({ name, link, owner: req.user.userId });
     return await res.status(httpStatus.CREATED).send(card);
   } catch (err) {
     return next(err);
@@ -24,8 +25,11 @@ const list = async (req, res, next) => {
 
 const remove = async (req, res, next) => {
   try {
-    const card = await getObjectOrRaise404(Card, req.params.cardId);
-    if (!card.isOwned(req.user)) {
+    const [card, user] = await Promise.all([
+      getObjectOrRaise404(Card, req.params.cardId),
+      User.findById(req.user.userId),
+    ]);
+    if (!card.isOwned(user)) {
       return res.status(httpStatus.FORBIDDEN)
         .send({ message: 'You are not allowed to remove other people\'s cards' });
     }
@@ -48,11 +52,11 @@ const toggleLike = async (req, res, next, callback) => {
 };
 
 const like = async (req, res, next) => {
-  await toggleLike(req, res, next, (card) => card.likes.addToSet(req.user._id));
+  await toggleLike(req, res, next, (card) => card.likes.addToSet(req.user.userId));
 };
 
 const dislike = async (req, res, next) => {
-  await toggleLike(req, res, next, (card) => card.likes.pull(req.user._id));
+  await toggleLike(req, res, next, (card) => card.likes.pull(req.user.userId));
 };
 
 module.exports = {

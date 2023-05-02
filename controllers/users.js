@@ -18,7 +18,8 @@ const get = async (req, res, next) => {
 
 const getMe = async (req, res, next) => {
   try {
-    return res.send(req.user);
+    const user = await User.findById(req.user.userId);
+    return res.send(user);
   } catch (err) {
     return next(err);
   }
@@ -33,7 +34,7 @@ const login = async (req, res, next) => {
       settings.SECRET_KEY,
       { expiresIn: settings.TOKEN_EXPIRATION },
     );
-    return res.send(token);
+    return res.send({ token, type: 'Bearer' });
   } catch (err) {
     if (err instanceof ObjectDoesNotExist) {
       return res.status(httpStatus.UNAUTHORIZED).send({ message: err.message });
@@ -71,7 +72,7 @@ const list = async (req, res, next) => {
 
 const update = async (req, res, next, data) => {
   try {
-    const user = await getObjectOrRaise404(User, req.user._id);
+    const user = await User.findById(req.user.userId);
     user.set({ ...data });
     await user.save();
     return res.send(user);
