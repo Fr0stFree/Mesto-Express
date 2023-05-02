@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 require('mongoose-type-url');
+const ObjectDoesNotExist = require('../core/errors');
+const bcrypt = require('bcryptjs');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -29,5 +31,10 @@ const cardSchema = new mongoose.Schema({
 }, {
   versionKey: false,
 });
+
+// eslint-disable-next-line func-names
+cardSchema.methods.isOwned = function (user) {
+  return user._id.toString() === this.owner._id.toString();
+};
 
 module.exports = mongoose.model('card', cardSchema);

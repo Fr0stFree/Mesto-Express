@@ -25,6 +25,10 @@ const list = async (req, res, next) => {
 const remove = async (req, res, next) => {
   try {
     const card = await getObjectOrRaise404(Card, req.params.cardId);
+    if (!card.isOwned(req.user)) {
+      return res.status(httpStatus.FORBIDDEN)
+        .send({ message: 'You are not allowed to remove other people\'s cards' });
+    }
     await card.deleteOne();
     return res.send({ message: `'${card.name}' успешно удалена` });
   } catch (err) {

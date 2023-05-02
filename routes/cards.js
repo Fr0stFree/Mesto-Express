@@ -1,7 +1,6 @@
 const express = require('express');
 const { celebrate } = require('celebrate');
 
-const auth = require('../middleware/auth');
 const {
   create,
   list,
@@ -16,10 +15,10 @@ const {
 
 const router = express.Router();
 
-router.get('/', auth, list);
-router.post('/', auth, celebrate(createSchema), create);
-router.delete('/:cardId', celebrate(getOneSchema), auth, remove);
-router.put('/:cardId/likes', celebrate(getOneSchema), auth, like);
-router.delete('/:cardId/likes', celebrate(getOneSchema), auth, dislike);
+router.get('/', list);
+router.post('/', celebrate(createSchema), create);
+router.delete('/:cardId', celebrate(getOneSchema), remove);
+router.put('/:cardId/likes', celebrate(getOneSchema), like);
+router.delete('/:cardId/likes', celebrate(getOneSchema), dislike);
 
 module.exports = router;

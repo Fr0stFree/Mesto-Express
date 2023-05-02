@@ -16,6 +16,14 @@ const get = async (req, res, next) => {
   }
 };
 
+const getMe = async (req, res, next) => {
+  try {
+    return res.send(req.user);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -84,6 +92,7 @@ const updateAvatar = async (req, res, next) => {
 
 module.exports = {
   get,
+  getMe,
   create,
   login,
   list,

@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
 
 // eslint-disable-next-line func-names
 userSchema.statics.findByCredentials = async function (email, password) {
-  const user = await this.findOne({ email });
+  const user = await this.findOne({ email }).select('+password');
   if (!user) {
     throw new ObjectDoesNotExist('Incorrect email or password');
   }

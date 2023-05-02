@@ -1,18 +1,14 @@
 const express = require('express');
 const { celebrate } = require('celebrate');
 
-const auth = require('../middleware/auth');
 const {
   get,
-  create,
-  login,
+  getMe,
   list,
   updateInfo,
   updateAvatar,
 } = require('../controllers/users');
 const {
-  registerSchema,
-  loginSchema,
   getOneSchema,
   updateInfoSchema,
   updateAvatarSchema,
@@ -20,11 +16,10 @@ const {
 
 const router = express.Router();
 
-router.post('/signup', celebrate(registerSchema), create);
-router.post('/signin', celebrate(loginSchema), login);
-router.get('/:userId', auth, celebrate(getOneSchema), get);
-router.get('/', auth, list);
-router.patch('/me', auth, celebrate(updateInfoSchema), updateInfo);
-router.patch('/me/avatar', auth, celebrate(updateAvatarSchema), updateAvatar);
+router.get('/me', getMe);
+router.get('/:userId', celebrate(getOneSchema), get);
+router.get('/', list);
+router.patch('/me', celebrate(updateInfoSchema), updateInfo);
+router.patch('/me/avatar', celebrate(updateAvatarSchema), updateAvatar);
 
 module.exports = router;

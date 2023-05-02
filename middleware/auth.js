@@ -14,7 +14,7 @@ module.exports = async (req, res, next) => {
   try {
     payload = jwt.verify(token, settings.SECRET_KEY);
   } catch (err) {
-    return res.status(httpStatus.BAD_REQUEST).json({ message: 'Token is not valid' });
+    return res.status(httpStatus.UNAUTHORIZED).json({ message: 'Token is not valid' });
   }
   req.user = await User.findById(payload.userId);
   return next();
