@@ -33,7 +33,7 @@ const login = async (req, res, next) => {
       settings.SECRET_KEY,
       { expiresIn: settings.TOKEN_EXPIRATION },
     );
-    return res.send({ token, type: 'bearer' });
+    return res.send(token);
   } catch (err) {
     if (err instanceof ObjectDoesNotExist) {
       return res.status(httpStatus.UNAUTHORIZED).send({ message: err.message });

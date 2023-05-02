@@ -29,7 +29,7 @@ const registerSchema = {
       .required()
       .min(2)
       .max(255)
-      .uri(),
+      .pattern(/^https?:(www\.)?[a-zа-яё\d\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
   }),
 };
 

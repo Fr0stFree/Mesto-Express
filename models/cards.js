@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 require('mongoose-type-url');
-const ObjectDoesNotExist = require('../core/errors');
-const bcrypt = require('bcryptjs');
 
 const cardSchema = new mongoose.Schema({
   name: {
