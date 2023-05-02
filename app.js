@@ -3,7 +3,7 @@ const { errors } = require('celebrate');
 
 const { SERVER_PORT, MONGO_DNS } = require('./config');
 const router = require('./routes/index');
-const errorHandler = require('./middleware/errorHandler');
+const { errorHandler } = require('./middleware');
 const connectToMongo = require('./core/db');
 
 const app = express();

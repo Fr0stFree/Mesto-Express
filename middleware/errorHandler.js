@@ -1,42 +1,19 @@
-const httpStatus = require('http-status');
 const mongoose = require('mongoose');
-
 const {
-  PermissionDenied,
-  ObjectDoesNotExist,
-  InvalidCredentials,
-  PageNotFound,
-} = require('../core/errors');
+  BAD_REQUEST,
+  INTERNAL_SERVER_ERROR,
+  CONFLICT,
+} = require('http-status');
 
 module.exports = async (err, req, res, next) => {
-  if (err instanceof ObjectDoesNotExist) {
-    return res.status(err.statusCode)
-      .send({ message: err.message });
+  let status = INTERNAL_SERVER_ERROR;
+  if (Object.prototype.hasOwnProperty.call(err, 'statusCode')) {
+    status = err.statusCode;
+  } else if (err instanceof mongoose.Error.ValidationError
+    || err instanceof mongoose.Error.CastError) {
+    status = BAD_REQUEST;
+  } else if (err.name === 'MongoServerError' && err.code === 11000) {
+    status = CONFLICT;
   }
-  if (err instanceof PermissionDenied) {
-    return res.status(err.statusCode)
-      .send({ message: err.message });
-  }
-  if (err instanceof InvalidCredentials) {
-    return res.status(err.statusCode)
-      .send({ message: err.message });
-  }
-  if (err instanceof PageNotFound) {
-    return res.status(err.statusCode)
-      .send({ message: err.message });
-  }
-  if (err instanceof mongoose.Error.ValidationError) {
-    return res.status(httpStatus.BAD_REQUEST)
-      .send({ message: err.message });
-  }
-  if (err instanceof mongoose.Error.CastError) {
-    return res.status(httpStatus.BAD_REQUEST)
-      .send({ message: err.message });
-  }
-  if (err.name === 'MongoServerError' && err.code === 11000) {
-    return res.status(httpStatus.CONFLICT)
-      .send({ message: err.message });
-  }
-  return res.status(httpStatus.INTERNAL_SERVER_ERROR)
-    .send({ message: `Произошла ошибка: ${err.message}` });
+  return res.status(status).send({ message: err.message });
 };

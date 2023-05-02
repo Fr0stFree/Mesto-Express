@@ -21,7 +21,6 @@ const updateAvatarSchema = {
     avatar: Joi
       .string()
       .required()
-      .min(2)
       .pattern(URL_PATTERN),
   }),
 };

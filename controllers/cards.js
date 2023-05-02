@@ -30,7 +30,7 @@ const remove = async (req, res, next) => {
       getUser(req.user.userId),
     ]);
     if (!card.isOwned(user)) {
-      next(new PermissionDenied('You are not allowed to remove other people\'s cards'));
+      return next(new PermissionDenied('You are not allowed to remove other people\'s cards'));
     }
     await card.deleteOne();
     return res.send({ message: `'${card.name}' успешно удалена` });
