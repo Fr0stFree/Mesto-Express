@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/users');
-const settings = require('../core/settings');
+const { SECRET_KEY, TOKEN_EXPIRATION } = require('../core/settings');
 const { getObjectOrRaise404 } = require('../core/utils');
 const ObjectDoesNotExist = require('../core/errors');
 
@@ -31,8 +31,8 @@ const login = async (req, res, next) => {
     const user = await User.findByCredentials(email, password);
     const token = jwt.sign(
       { userId: user._id.toString() },
-      settings.SECRET_KEY,
-      { expiresIn: settings.TOKEN_EXPIRATION },
+      SECRET_KEY,
+      { expiresIn: TOKEN_EXPIRATION },
     );
     return res.send({ token, type: 'Bearer' });
   } catch (err) {

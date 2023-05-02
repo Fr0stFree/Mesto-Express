@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { errors } = require('celebrate');
 
-const settings = require('./core/settings');
+const { SERVER_PORT, MONGO_DNS } = require('./core/settings');
 const router = require('./routes/index');
 const errorHandler = require('./middleware/errorHandler');
 const { connectToMongo } = require('./core/db');
@@ -15,6 +15,6 @@ app.use(router);
 app.use(errors());
 app.use(errorHandler);
 
-app.listen(settings.SERVER_PORT, async () => {
-  await connectToMongo(settings.MONGO_DNS);
+app.listen(SERVER_PORT, async () => {
+  await connectToMongo(MONGO_DNS);
 });

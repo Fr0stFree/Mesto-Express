@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const httpStatus = require('http-status');
 
-const settings = require('../core/settings');
+const { SECRET_KEY } = require('../core/settings');
 
 module.exports = async (req, res, next) => {
   const { authorization } = req.headers;
@@ -11,7 +11,7 @@ module.exports = async (req, res, next) => {
   const token = authorization.replace('Bearer ', '');
   let payload;
   try {
-    payload = jwt.verify(token, settings.SECRET_KEY);
+    payload = jwt.verify(token, SECRET_KEY);
   } catch (err) {
     return res.status(httpStatus.UNAUTHORIZED).send({ message: 'Token is not valid' });
   }

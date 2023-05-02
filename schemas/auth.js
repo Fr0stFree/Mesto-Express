@@ -1,4 +1,5 @@
 const { Joi } = require('celebrate');
+const { URL_PATTERN } = require('../core/settings');
 
 const registerSchema = {
   body: Joi.object().keys({
@@ -27,7 +28,7 @@ const registerSchema = {
       .string()
       .optional()
       .max(255)
-      .pattern(/^https?:(www\.)?[a-zа-яё\d\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
+      .pattern(URL_PATTERN),
   }),
 };
 

@@ -1,4 +1,5 @@
 const { Joi } = require('celebrate');
+const { URL_PATTERN } = require('../core/settings');
 
 const createSchema = {
   body: Joi.object().keys({
@@ -10,7 +11,7 @@ const createSchema = {
     link: Joi
       .string()
       .required()
-      .uri(),
+      .pattern(URL_PATTERN),
   }),
 };
 

@@ -1,4 +1,5 @@
 const { Joi } = require('celebrate');
+const { URL_PATTERN } = require('../core/settings');
 
 const updateInfoSchema = {
   body: Joi.object().keys({
@@ -22,7 +23,7 @@ const updateAvatarSchema = {
       .required()
       .min(2)
       .max(255)
-      .uri(),
+      .pattern(URL_PATTERN),
   }),
 };
 
