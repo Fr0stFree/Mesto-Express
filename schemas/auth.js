@@ -16,7 +16,6 @@ const registerSchema = {
     name: Joi
       .string()
       .optional()
-      .alphanum()
       .min(2)
       .max(30),
     about: Joi

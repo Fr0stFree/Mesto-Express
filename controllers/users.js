@@ -55,6 +55,7 @@ const create = async (req, res, next) => {
     const user = await User.create({
       email, password: hashedPassword, name, about, avatar,
     });
+    user.password = undefined;
     return res.status(httpStatus.CREATED).send(user);
   } catch (err) {
     return next(err);

@@ -18,7 +18,9 @@ const getOneSchema = {
   params: Joi.object().keys({
     cardId: Joi
       .string()
-      .required(),
+      .required()
+      .hex()
+      .length(24),
   }),
 };
 

@@ -16,5 +16,5 @@ app.use(errors());
 app.use(errorHandler);
 
 app.listen(settings.SERVER_PORT, async () => {
-  await connectToMongo(settings.MONGO_DNS || 'mongodb://localhost:27017/mestodb');
+  await connectToMongo(settings.MONGO_DNS);
 });

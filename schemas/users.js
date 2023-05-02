@@ -6,8 +6,7 @@ const updateInfoSchema = {
       .string()
       .optional()
       .min(2)
-      .max(30)
-      .alphanum(),
+      .max(30),
     about: Joi
       .string()
       .optional()
@@ -31,7 +30,9 @@ const getOneSchema = {
   params: Joi.object().keys({
     userId: Joi
       .string()
-      .required(),
+      .required()
+      .hex()
+      .length(24),
   }),
 };
 
