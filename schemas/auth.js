@@ -15,19 +15,18 @@ const registerSchema = {
       .max(255),
     name: Joi
       .string()
-      .required()
+      .optional()
       .alphanum()
       .min(2)
       .max(30),
     about: Joi
       .string()
-      .required()
+      .optional()
       .min(2)
       .max(30),
     avatar: Joi
       .string()
-      .required()
-      .min(2)
+      .optional()
       .max(255)
       .pattern(/^https?:(www\.)?[a-zа-яё\d\-._~:/?#[\]@!$&'()*+,;=]+#?$/i),
   }),
