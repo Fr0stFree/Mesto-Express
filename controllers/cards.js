@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 
-const Card = require('../models/cards');
+const { Card } = require('../models');
 const { getObjectOrRaise404, getUser } = require('../core/utils');
 const { PermissionDenied } = require('../core/errors');
 
